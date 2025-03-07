@@ -33,3 +33,13 @@ loc2 <- locus(data = AST, gene = 'MX1', flank = 1e5,
              ens_db = "EnsDb.Hsapiens.v86")
 loc2 <- link_LD(loc2, pop = "CEU", genome_build="grch38" ,token = "abc8c8e6decc")
 summary(loc2)
+
+
+pdf("MX1_plot_PD_vs_Ast.pdf", width = 6, height = 6)
+# set up layered plot with 2 plots & a gene track; store old par() settings
+oldpar <- set_layers(2)
+scatter_plot(loc1, xticks = FALSE, labels="index", main="Parkinson Disease", ylim = c(0, 10), beta = "beta")
+scatter_plot(loc2, xticks = FALSE, labels="rs17000900", main="Astrocytes.", ylim = c(0, 10), beta = "beta")
+genetracks(loc1)
+par(oldpar)  # revert par() settings
+dev.off()
