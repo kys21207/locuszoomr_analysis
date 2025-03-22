@@ -41,5 +41,5 @@ pf <- quote({
 })
 oldpar <- set_layers(1)
 scatter_plot_cs(loc1,panel.first = pf)
-genetracks(loc1)
+genetracks(loc1, highlight = "IL23R")
 par(oldpar)
