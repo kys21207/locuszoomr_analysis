@@ -26,7 +26,7 @@ cs <- read.table(input_file5,header=T,sep="\t")
 
 merged_data1 <- merge(data1, ref, by.x ="ID",by.y="SNPID")
 merged_data1 <- merged_data1[!is.na(rsID)]
-merged_data2 <- merge(merged_data1, cs, by.x="ID", by.y="SNP",all.x=all)
+merged_data2 <- merge(merged_data1, cs, by.x="ID", by.y="SNP",all.x=T)
 
 #CHROM GENPOS ID ALLELE0 ALLELE1 A1FREQ N BETA SE CHISQ LOG10P INFO
 dta <- merged_data2[, .(chrom = CHROM, pos = GENPOS, other_allele = ALLELE0, effect_allele = ALLELE1, 
