@@ -30,16 +30,24 @@ merged_data1 <- merge(data1, ref, by.x ="ID",by.y="SNPID")
 merged_data1 <- merged_data1[!is.na(rsID)]
 merged_data2 <- merge(merged_data1, cs, by.x="ID", by.y="SNP",all.x=T)
 
+library(dplyr)
+snps <- (get_cs_lead_snps(cs))
+#which(merged_data2$ID %in% snps$SNP)
+index_snps <- merged_data2$rsID[which(merged_data2$ID %in% snps$SNP)]
+index_snps
+
 #CHROM GENPOS ID ALLELE0 ALLELE1 A1FREQ N BETA SE CHISQ LOG10P INFO
 dta <- merged_data2[, .(chrom = CHROM, pos = GENPOS, other_allele = ALLELE0, effect_allele = ALLELE1, 
                     beta = BETA, se = SE, p = 10^(-LOG10P), rsid = rsID,cs_num = CS_Number)]
-loc1 <- locus(data = dta, gene = 'IL23R', flank = 1e5,
+loc1 <- locus(data = dta, gene = 'IL23R', flank = 5e5,
              ens_db = "EnsDb.Hsapiens.v86") 
 pf <- quote({
   v <- loc1$TX[loc1$TX$gene_name == "IL23R", c("start", "end")]
   abline(v = v, col = "green")
 })
+pdf("IL23R_plot_example.pdf", width = 6, height = 7)
 oldpar <- set_layers(1)
-scatter_plot_cs(loc1,panel.first = pf)
-genetracks(loc1, highlight = "IL23R")
+scatter_plot_cs(loc1,panel.first = pf,xticks = FALSE, labels=index_snps, main="Example Disease")
+genetracks(loc1, highlight = c("IL23R","SLC35D1"))
 par(oldpar)
+dev.off()
