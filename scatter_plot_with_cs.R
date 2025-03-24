@@ -300,10 +300,26 @@ scatter_plot_cs <- function(loc,
         
         # Add credible sets to legend
         if (has_cs) {
-            cs_leg <- paste("CS", sort(cs_numbers),"(",cs_genename,")")
+            # Create a data frame with CS info and p-values
+            cs_info <- data.frame(
+                cs_num = cs_numbers,
+                genename = cs_genename,
+                p_value = sapply(cs_numbers, function(cn) {
+                    min(data$p[which(data$cs_num == cn)], na.rm = TRUE)
+                })
+            )
+            
+            # Sort by p-value
+            cs_info <- cs_info[order(cs_info$p_value), ]
+            
+            # Create legend entries in sorted order
+            cs_leg <- paste("CS", cs_info$cs_num, "(", cs_info$genename, ")")
             leg <- c(leg, cs_leg)
-            pch_leg <- c(pch_leg, cs_shapes[1:length(cs_numbers)])
-            pt.bg <- c(pt.bg, rep(cs_color, length(cs_numbers)))
+            
+            # Maintain corresponding shapes order
+            cs_shapes_ordered <- cs_shapes[((seq_along(cs_info$cs_num)-1) %% length(cs_shapes)) + 1]
+            pch_leg <- c(pch_leg, cs_shapes_ordered)
+            pt.bg <- c(pt.bg, rep(cs_color, length(cs_info$cs_num)))
         }
         
         # Draw legend
