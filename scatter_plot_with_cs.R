@@ -126,14 +126,18 @@ scatter_plot_cs <- function(loc,
     if (has_cs) {
         cs_numbers <- unique(data$cs_num[!is.na(data$cs_num)])
         cs_shapes <- c(22L, 24L, 25L, 23L) # square, up tri, down tri, diamond
-        
+
+    # Initialize cs_genename vector
+    cs_genename <- character(length(cs_numbers))
+      
         for (i in seq_along(cs_numbers)) {
             cs_idx <- which(data$cs_num == cs_numbers[i])
             pch[cs_idx] <- cs_shapes[(i-1) %% length(cs_shapes) + 1]
             point_cex[cs_idx] <- cex * cs_cex
+            cs_genename[i] <- unique(data$flames[cs_idx])
         }
     }
-    
+   
     # Handle index SNPs and beta coefficients
     pch[data[, loc$labs] %in% index_snp] <- 23L
     if (!is.null(beta)) {
@@ -296,7 +300,7 @@ scatter_plot_cs <- function(loc,
         
         # Add credible sets to legend
         if (has_cs) {
-            cs_leg <- paste("CS", sort(cs_numbers))
+            cs_leg <- paste("CS", sort(cs_numbers),"(",cs_genename,")")
             leg <- c(leg, cs_leg)
             pch_leg <- c(pch_leg, cs_shapes[1:length(cs_numbers)])
             pt.bg <- c(pt.bg, rep(cs_color, length(cs_numbers)))
